@@ -90,16 +90,12 @@
   $( document ).ready(function() {
     var markerHelper = function(position, image){
       var myLatlng = new google.maps.LatLng(position[0],position[1]);
-
+      var what = image || {path: google.maps.SymbolPath.CIRCLE,scale: 14}
       var marker = new google.maps.Marker({
         position: myLatlng,
         // animation: google.maps.Animation.BOUNCE,
         title:"Hello World!",
-        icon: image
-        // icon: {
-        //     path: google.maps.SymbolPath.CIRCLE,
-        //     scale: 14
-        //   }
+        icon: what
       });
 
       // To add the marker to the map, call setMap();
@@ -117,13 +113,14 @@
       center: [37.4, -122.6],
       radius: 3.609 //kilometers
     });
-    firebaseRef.on("value", function(snapshot) {
+    // ref.once runs it only once. to populate our map with markers. ref.on runs it EVERY time data changes.
+    firebaseRef.once("value", function(snapshot) {
       var allData = snapshot.val();
       console.log(allData);
       console.log(allData.l);
       for (var key in allData.l){
         // console.log(allData.l[key]);
-        markerHelper(allData.l[key],'images/tack2.png');
+        markerHelper(allData.l[key]);
       }
 
     }, function (errorObject) {
