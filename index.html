@@ -17,15 +17,15 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgcNyt5uVS0WmMKGJD7z-7HvkPiuUy224">
   </script>
   <script type="text/javascript">
-    function initialize() {
-      var mapOptions = {
-        center: { lat: 37.7836704, lng: -122.409237699999994},
-        zoom: 14
-      };
-      var map = new google.maps.Map(document.getElementById('map-canvas'),
-          mapOptions);
-    }
-    google.maps.event.addDomListener(window, 'load', initialize);
+    // function initialize() {
+    //   var mapOptions = {
+    //     center: { lat: 37.7836704, lng: -122.409237699999994},
+    //     zoom: 14
+    //   };
+    //   var map = new google.maps.Map(document.getElementById('map-canvas'),
+    //       mapOptions);
+    // }
+    // google.maps.event.addDomListener(window, 'load', initialize);
   </script>
 </head>
 
@@ -37,66 +37,93 @@
 
 <script>
 
-  var x = $('name');
-  // $('body').append('<div> Kikikikik </div>')
-  // console.log('map',map);
-  $( "#target" ).submit(function( event ) {
-    $('#target').append('<div id="loading"> Loading... </div>')
-    var data = $("#target :input")[0].value;
-    // set the text in input box to null
-    this.reset();
-    event.preventDefault();
-    console.log('data',data);
+  // var x = $('name');
+  // $( "#target" ).submit(function( event ) {
+    // $('#target').append('<div id="loading"> Loading... </div>');
+    // var data = $("#target :input")[0].value;
+    // // set the text in input box to null
+    // this.reset();
+    // event.preventDefault();
+    // console.log('data',data);
 
-    function getLocation() {
-      console.log('gets to get location');
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-      }
-    };
-    getLocation();
+    // function getLocation() {
+    //   console.log('gets to get location');
+    //   if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition(showPosition);
+    //   }
+    // };
+    // getLocation();
 
-    function showPosition(position) {
-      console.log('position is',position);
-      var lat = position.coords.latitude;
-      var lon = position.coords.longitude;
+  //   function showPosition(position) {
+  //     console.log('position is',position);
+  //     var lat = position.coords.latitude;
+  //     var lon = position.coords.longitude;
 
-      var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
-      var geoFire = new GeoFire(firebaseRef);
+  //     var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
+  //     var geoFire = new GeoFire(firebaseRef);
 
-      geoFire.set(data, [lat,lon]).then(function() {
-        console.log("Provided key has been added to GeoFire");
-        // console.log($('#target').children('#loading'));
-        $('#target').children('#loading').remove();
-        var myLatlng = new google.maps.LatLng(37.7836,-122.409279);
-        var mapOptions = {
-          zoom: 14,
-          center: myLatlng
-        }
-        var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+  //     geoFire.set(data, [lat,lon]).then(function() {
+  //       console.log("Provided key has been added to GeoFire");
+  //       // console.log($('#target').children('#loading'));
+  //       $('#target').children('#loading').remove();
+  //       var myLatlng = new google.maps.LatLng(37.7836,-122.409279);
+  //       var mapOptions = {
+  //         zoom: 14,
+  //         center: myLatlng
+  //       }
+  //       var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
-        var marker = new google.maps.Marker({
-            position: myLatlng,
-            title:"Hello World!"
-        });
+  //       var marker = new google.maps.Marker({
+  //           position: myLatlng,
+  //           title:"Hello World!"
+  //       });
 
-        // To add the marker to the map, call setMap();
-        marker.setMap(map);
-      }, function(error) {
-        console.log("Error: " + error);
-      });
-    }
+  //       // To add the marker to the map, call setMap();
+  //       marker.setMap(map);
+  //     }, function(error) {
+  //       console.log("Error: " + error);
+  //     }
+  //   // }
 
 
-  });
+  // };
   $( document ).ready(function() {
+    var mapOptions = {
+      center: { lat: 37.7836704, lng: -122.409237699999994},
+      zoom: 14
+    };
+    var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
     $("#target :input").prop("disabled", true);
     console.log( "ready! grabbing location" );
     var showPosition = function(position){
       console.log('position',position.coords);
-
       console.log('location grabbed');
       $("#target :input").prop("disabled", false);
+      $( "#target" ).submit(function( event ) {
+        console.log('map is',map);
+        event.preventDefault();
+        // $('#target').append('<div id="loading"> Loading... </div>');
+        var data = $("#target :input")[0].value;
+        this.reset();
+        console.log('data',data);
+        var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
+        var geoFire = new GeoFire(firebaseRef);
+
+        geoFire.set(data, [position.coords.latitude,position.coords.longitude]).then(function() {
+          console.log("Provided key has been added to GeoFire");
+        });
+
+        var myLatlng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+
+        var marker = new google.maps.Marker({
+          position: myLatlng,
+          title:"Hello World!"
+        });
+
+        // To add the marker to the map, call setMap();
+        marker.setMap(map);
+
+      });
     }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition);
