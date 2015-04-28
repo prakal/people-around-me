@@ -39,9 +39,11 @@
 
   var x = $('name');
   // $('body').append('<div> Kikikikik </div>')
+  // console.log('map',map);
   $( "#target" ).submit(function( event ) {
     $('#target').append('<div id="loading"> Loading... </div>')
     var data = $("#target :input")[0].value;
+    // set the text in input box to null
     this.reset();
     event.preventDefault();
     console.log('data',data);
@@ -66,6 +68,20 @@
         console.log("Provided key has been added to GeoFire");
         // console.log($('#target').children('#loading'));
         $('#target').children('#loading').remove();
+        var myLatlng = new google.maps.LatLng(37.7836,-122.409279);
+        var mapOptions = {
+          zoom: 14,
+          center: myLatlng
+        }
+        var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+        var marker = new google.maps.Marker({
+            position: myLatlng,
+            title:"Hello World!"
+        });
+
+        // To add the marker to the map, call setMap();
+        marker.setMap(map);
       }, function(error) {
         console.log("Error: " + error);
       });
@@ -73,7 +89,19 @@
 
 
   });
+  $( document ).ready(function() {
+    $("#target :input").prop("disabled", true);
+    console.log( "ready! grabbing location" );
+    var showPosition = function(position){
+      console.log('position',position.coords);
 
+      console.log('location grabbed');
+      $("#target :input").prop("disabled", false);
+    }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    }
+  });
 
  </script>
  <div id="map-canvas"></div>
