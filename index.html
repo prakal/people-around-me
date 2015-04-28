@@ -88,20 +88,23 @@
 
   // };
   $( document ).ready(function() {
-    var markerHelper = function(position, image){
+    var markerHelper = function(position, image, title){
+
       var myLatlng = new google.maps.LatLng(position[0],position[1]);
-      var what = image || {path: google.maps.SymbolPath.CIRCLE,scale: 14}
+      var what = image || {path: google.maps.SymbolPath.CIRCLE,scale: 7}
       var marker = new google.maps.Marker({
         position: myLatlng,
         // animation: google.maps.Animation.BOUNCE,
-        title:"Hello World!",
+        title: title,
         icon: what
       });
 
       // To add the marker to the map, call setMap();
+      allMarkers.push(marker);
       map.setCenter(myLatlng);
       marker.setMap(map);
     };
+    var allMarkers = [];
     var mapOptions = {
       center: { lat: 37.7836704, lng: -122.409237699999994},
       zoom: 13
@@ -109,10 +112,11 @@
     var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
     var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
     var geoFire = new GeoFire(firebaseRef);
-    var geoQuery = geoFire.query({
-      center: [37.4, -122.6],
-      radius: 3.609 //kilometers
-    });
+    // var geoQuery = geoFire.query({
+    //   center: [37.4, -122.6],
+    //   radius: 200 //kilometers
+    // });
+
     // ref.once runs it only once. to populate our map with markers. ref.on runs it EVERY time data changes.
     firebaseRef.once("value", function(snapshot) {
       var allData = snapshot.val();
@@ -120,7 +124,7 @@
       console.log(allData.l);
       for (var key in allData.l){
         // console.log(allData.l[key]);
-        markerHelper(allData.l[key]);
+        markerHelper(allData.l[key],null,key);
       }
 
     }, function (errorObject) {
@@ -146,19 +150,31 @@
 
         // var x contains randomized [latitude,longitude]
         var x = function(){
-          var a = Math.random()*0.03;
+          var a = 0.08 * (Math.random()-0.5);
+          var b = 0.08 * (Math.random()-0.5);
+
           var x = position.coords.latitude;
           var y = position.coords.longitude;
           console.log('before',x);
           x += a;
-          y += a;
+          y += b;
           console.log('after',x);
           return [x,y];
         }();
         console.log('x is',x[0],x[1]);
+        // iterate over allMarkers
+        for (var i = 0; i < allMarkers.length; i++){
+          console.log(allMarkers[i].title === data);
+          if (allMarkers[i].title === data){
+            allMarkers[i].setMap(null);
+            allMarkers.splice(i,1);
+            break;
+          }
+        }
         geoFire.set(data, [x[0],x[1]]).then(function() {
           console.log("Provided key has been added to GeoFire");
-          markerHelper(x,'images/tack2.png');
+          console.log('allmarkers',allMarkers);
+          markerHelper(x,'images/tack2.png',data);
         });
 
 
