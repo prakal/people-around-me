@@ -128,10 +128,12 @@
 
         var marker = new google.maps.Marker({
           position: myLatlng,
+          animation: google.maps.Animation.DROP,
           title:"Hello World!"
         });
 
         // To add the marker to the map, call setMap();
+        map.setCenter(myLatlng);
         marker.setMap(map);
 
       });
