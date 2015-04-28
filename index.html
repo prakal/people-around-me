@@ -88,11 +88,51 @@
 
   // };
   $( document ).ready(function() {
+    var markerHelper = function(position, image){
+      var myLatlng = new google.maps.LatLng(position[0],position[1]);
+
+      var marker = new google.maps.Marker({
+        position: myLatlng,
+        // animation: google.maps.Animation.BOUNCE,
+        title:"Hello World!",
+        icon: image
+        // icon: {
+        //     path: google.maps.SymbolPath.CIRCLE,
+        //     scale: 14
+        //   }
+      });
+
+      // To add the marker to the map, call setMap();
+      map.setCenter(myLatlng);
+      marker.setMap(map);
+    };
     var mapOptions = {
       center: { lat: 37.7836704, lng: -122.409237699999994},
-      zoom: 14
+      zoom: 13
     };
     var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
+    var geoFire = new GeoFire(firebaseRef);
+    var geoQuery = geoFire.query({
+      center: [37.4, -122.6],
+      radius: 3.609 //kilometers
+    });
+    firebaseRef.on("value", function(snapshot) {
+      var allData = snapshot.val();
+      console.log(allData);
+      console.log(allData.l);
+      for (var key in allData.l){
+        // console.log(allData.l[key]);
+        markerHelper(allData.l[key],'images/tack2.png');
+      }
+
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
+    // geoQuery is for moving things. super useful if subjects are moving around.
+    // geoQuery.on("value",function(key,location,distance){
+    //   console.log("Bicycle shop " + key + " found at " + location + " (" + distance + " km away)");
+    // });
     $("#target :input").prop("disabled", true);
     console.log( "ready! grabbing location" );
     var showPosition = function(position){
@@ -106,8 +146,7 @@
         var data = $("#target :input")[0].value;
         this.reset();
         console.log('data',data);
-        var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
-        var geoFire = new GeoFire(firebaseRef);
+
         // var x contains randomized [latitude,longitude]
         var x = function(){
           var a = Math.random()*0.03;
@@ -122,20 +161,12 @@
         console.log('x is',x[0],x[1]);
         geoFire.set(data, [x[0],x[1]]).then(function() {
           console.log("Provided key has been added to GeoFire");
+          markerHelper(x,'images/tack2.png');
         });
 
-        var myLatlng = new google.maps.LatLng(x[0],x[1]);
 
-        var marker = new google.maps.Marker({
-          position: myLatlng,
-          animation: google.maps.Animation.DROP,
-          title:"Hello World!"
-        });
 
-        // To add the marker to the map, call setMap();
-        map.setCenter(myLatlng);
-        marker.setMap(map);
-
+        $("#target :input").prop("disabled", true);
       });
     }
     if (navigator.geolocation) {
