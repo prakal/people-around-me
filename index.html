@@ -98,7 +98,20 @@
         title: title,
         icon: what
       });
-
+      var infoWindow = new google.maps.InfoWindow({
+            content: title
+          });
+      google.maps.event.addListener(marker, 'click', function() {
+          console.log(marker.title,'clicked');
+          // ().append()
+          infoWindow.close();
+          infoWindow.open(map,marker);
+          google.maps.event.addListener(window, 'click', function() {
+                  infoWindow.close();
+              });
+          setTimeout(function () { infoWindow.close(); }, 5000);
+          map.setCenter(marker.getPosition());
+        });
       // To add the marker to the map, call setMap();
       allMarkers.push(marker);
       map.setCenter(myLatlng);
@@ -107,7 +120,7 @@
     var allMarkers = [];
     var mapOptions = {
       center: { lat: 37.7836704, lng: -122.409237699999994},
-      zoom: 13
+      zoom: 12
     };
     var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
     var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
