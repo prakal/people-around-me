@@ -108,12 +108,23 @@
         console.log('data',data);
         var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
         var geoFire = new GeoFire(firebaseRef);
-
-        geoFire.set(data, [position.coords.latitude,position.coords.longitude]).then(function() {
+        // var x contains randomized [latitude,longitude]
+        var x = function(){
+          var a = Math.random()*0.03;
+          var x = position.coords.latitude;
+          var y = position.coords.longitude;
+          console.log('before',x);
+          x += a;
+          y += a;
+          console.log('after',x);
+          return [x,y];
+        }();
+        console.log('x is',x[0],x[1]);
+        geoFire.set(data, [x[0],x[1]]).then(function() {
           console.log("Provided key has been added to GeoFire");
         });
 
-        var myLatlng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+        var myLatlng = new google.maps.LatLng(x[0],x[1]);
 
         var marker = new google.maps.Marker({
           position: myLatlng,
