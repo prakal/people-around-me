@@ -68,6 +68,17 @@
       map.setCenter(myLatlng);
       marker.setMap(map);
     };
+
+    // random pin generator for client side
+    setInterval(function(){
+      markerHelper([37.7836704 + 0.06 * (Math.random()-0.5),-122.409237699999994 + 0.06 * (Math.random()-0.5)],null,'Random',30);
+    },3000);
+
+
+
+
+
+
     var allMarkers = [];
     var mapOptions = {
       center: { lat: 37.7836704, lng: -122.409237699999994},
