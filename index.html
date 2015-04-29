@@ -30,8 +30,10 @@
 </head>
 
 <body>
-<form id="target" action="" method="post">
-  <input id="name" type="text" name="name">
+<form id="target" action="" method="post" oninput="amount.value=time.value">
+  <input id="name" type="text" name="name" required>
+  <input id="time" type="range" name="time" min="0" max="60" step="5" required>
+  <output name="amount" for="time">30</output> minutes
   <input type="submit" value="Submit">
 </form>
 
@@ -99,16 +101,13 @@
         icon: what
       });
       var infoWindow = new google.maps.InfoWindow({
-            content: title
+            content: "<div class='tooltip' style='color:red'>"+title+"</div>",
+            maxWidth: 200
           });
       google.maps.event.addListener(marker, 'click', function() {
           console.log(marker.title,'clicked');
           // ().append()
-          infoWindow.close();
           infoWindow.open(map,marker);
-          google.maps.event.addListener(window, 'click', function() {
-                  infoWindow.close();
-              });
           setTimeout(function () { infoWindow.close(); }, 5000);
           map.setCenter(marker.getPosition());
         });
@@ -163,8 +162,8 @@
 
         // var x contains randomized [latitude,longitude]
         var x = function(){
-          var a = 0.08 * (Math.random()-0.5);
-          var b = 0.08 * (Math.random()-0.5);
+          var a = 0.06 * (Math.random()-0.5);
+          var b = 0.06 * (Math.random()-0.5);
 
           var x = position.coords.latitude;
           var y = position.coords.longitude;
