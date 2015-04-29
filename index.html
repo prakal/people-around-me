@@ -148,8 +148,9 @@
           console.log("Provided key has been added to GeoFire");
           console.log('allmarkers',allMarkers);
           markerHelper(x,'images/tack2.png',name,time);
+          $("#target :input").prop("disabled", true);
         });
-        var postsRef = ref.child("firebaseRef");
+        // var postsRef = ref.child("firebaseRef");
 
 
 
