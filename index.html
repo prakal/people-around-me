@@ -32,65 +32,15 @@
 <body>
 <form id="target" action="" method="post" oninput="amount.value=time.value">
   <input id="name" type="text" name="name" required>
-  <input id="time" type="range" name="time" min="0" max="60" step="5" required>
+  <input id="time" type="range" name="time" min="10" max="60" step="5" required>
   <output name="amount" for="time">30</output> minutes
   <input type="submit" value="Submit">
 </form>
 
 <script>
 
-  // var x = $('name');
-  // $( "#target" ).submit(function( event ) {
-    // $('#target').append('<div id="loading"> Loading... </div>');
-    // var data = $("#target :input")[0].value;
-    // // set the text in input box to null
-    // this.reset();
-    // event.preventDefault();
-    // console.log('data',data);
-
-    // function getLocation() {
-    //   console.log('gets to get location');
-    //   if (navigator.geolocation) {
-    //     navigator.geolocation.getCurrentPosition(showPosition);
-    //   }
-    // };
-    // getLocation();
-
-  //   function showPosition(position) {
-  //     console.log('position is',position);
-  //     var lat = position.coords.latitude;
-  //     var lon = position.coords.longitude;
-
-  //     var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
-  //     var geoFire = new GeoFire(firebaseRef);
-
-  //     geoFire.set(data, [lat,lon]).then(function() {
-  //       console.log("Provided key has been added to GeoFire");
-  //       // console.log($('#target').children('#loading'));
-  //       $('#target').children('#loading').remove();
-  //       var myLatlng = new google.maps.LatLng(37.7836,-122.409279);
-  //       var mapOptions = {
-  //         zoom: 14,
-  //         center: myLatlng
-  //       }
-  //       var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-
-  //       var marker = new google.maps.Marker({
-  //           position: myLatlng,
-  //           title:"Hello World!"
-  //       });
-
-  //       // To add the marker to the map, call setMap();
-  //       marker.setMap(map);
-  //     }, function(error) {
-  //       console.log("Error: " + error);
-  //     }
-  //   // }
-
-
-  // };
   $( document ).ready(function() {
-    var markerHelper = function(position, image, title){
+    var markerHelper = function(position, image, title, time){
 
       var myLatlng = new google.maps.LatLng(position[0],position[1]);
       var what = image || {path: google.maps.SymbolPath.CIRCLE,scale: 7}
@@ -111,6 +61,8 @@
           setTimeout(function () { infoWindow.close(); }, 5000);
           map.setCenter(marker.getPosition());
         });
+      var timer = time*1000 || Math.random()*100000;
+      setTimeout(function () { marker.setMap(null) }, timer);
       // To add the marker to the map, call setMap();
       allMarkers.push(marker);
       map.setCenter(myLatlng);
@@ -124,10 +76,6 @@
     var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
     var firebaseRef = new Firebase("https://intense-inferno-9753.firebaseio.com/geofire/");
     var geoFire = new GeoFire(firebaseRef);
-    // var geoQuery = geoFire.query({
-    //   center: [37.4, -122.6],
-    //   radius: 200 //kilometers
-    // });
 
     // ref.once runs it only once. to populate our map with markers. ref.on runs it EVERY time data changes.
     firebaseRef.once("value", function(snapshot) {
@@ -156,9 +104,11 @@
         console.log('map is',map);
         event.preventDefault();
         // $('#target').append('<div id="loading"> Loading... </div>');
-        var data = $("#target :input")[0].value;
+        var name = $("#target :input")[0].value;
+        var time = $("#target :input")[1].value;
+        // console.log('daaata',$("#target :input")[1].value);
         this.reset();
-        console.log('data',data);
+        console.log('name',name);
 
         // var x contains randomized [latitude,longitude]
         var x = function(){
@@ -176,18 +126,19 @@
         console.log('x is',x[0],x[1]);
         // iterate over allMarkers
         for (var i = 0; i < allMarkers.length; i++){
-          console.log(allMarkers[i].title === data);
-          if (allMarkers[i].title === data){
+          // console.log(allMarkers[i].title === name);
+          if (allMarkers[i].title === name){
             allMarkers[i].setMap(null);
             allMarkers.splice(i,1);
             break;
           }
         }
-        geoFire.set(data, [x[0],x[1]]).then(function() {
+        geoFire.set(name, [x[0],x[1]]).then(function() {
           console.log("Provided key has been added to GeoFire");
           console.log('allmarkers',allMarkers);
-          markerHelper(x,'images/tack2.png',data);
+          markerHelper(x,'images/tack2.png',name,time);
         });
+        var postsRef = ref.child("firebaseRef");
 
 
 
