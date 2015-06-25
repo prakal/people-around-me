@@ -1,7 +1,7 @@
 # PAM (People Around Me)#
 
 ## What ##
-  > AroundMe
+  > PeopleAroundMe
 
 ## Who would use this ##
   > People who are too shy to go up to people and talk to them
@@ -24,6 +24,6 @@
 ## Customer Quote ##
   > "I met my best friend using AroundMe".
 
-URL: www.pam.herokuapp.com
+URL: http://pam.herokuapp.com
 
 <img src="screenshot.png" alt="Screenshot of app">
